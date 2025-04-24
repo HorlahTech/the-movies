@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:new_movies/movie_dec_screen.dart';
+import 'package:new_movies/themovies_controller.dart';
 
 void main() {
   runApp(const MyApp());
@@ -58,11 +60,18 @@ class TileWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       child: ListTile(
+        onTap: (){
+         final controller = Controller();
+         controller.getUpcomingMovies();
+          Navigator.push(context, MaterialPageRoute(builder: (context)=> MovieDecScreen()));
+        },
         leading: CircleAvatar(
           radius: 20,
-          child: Image.network(
-            "https://cdn.fstoppers.com/styles/full/s3/media/2019/12/04/nando-jpeg-quality-001.jpg",
-          ),
+          // child: Image.asset(
+          //   "asset/dice-1502706_640.png",
+          //   fit: BoxFit.cover,
+          // ),
+          backgroundImage:AssetImage( "asset/dice-1502706_640.png") ,
         ),
         title: Text("Angel Has Fallen"),
         subtitle: Text("2019-08-17"),
