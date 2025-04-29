@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:new_movies/movie.dart';
 import 'package:new_movies/movie_dec_screen.dart';
 import 'package:new_movies/themovies_controller.dart';
 
@@ -41,11 +42,19 @@ class _MyHomePageState extends State<MyHomePage> {
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(8.0),
-          child: ListView.builder(
-            itemCount: 20,
-            itemBuilder: (context, index) {
-              return TileWidget();
-            },
+          child: FutureBuilder(
+            future:  Controller().getUpcomingMovies(),
+            builder: (context, AsyncSnapshot<List<Movie>?> snapshot) {
+              if(snapshot.connectionState == ConnectionState.waiting){
+                return Center(child: CircularProgressIndicator(),);
+              }
+              return ListView.builder(
+                itemCount: 20,
+                itemBuilder: (context, index) {
+                  return TileWidget(movie: snapshot.data?[index],);
+                },
+              );
+            }
           ),
         ),
       ),
@@ -54,15 +63,16 @@ class _MyHomePageState extends State<MyHomePage> {
 }
 
 class TileWidget extends StatelessWidget {
-  const TileWidget({super.key});
+  const TileWidget({super.key, required this.movie});
+final Movie? movie;
 
   @override
   Widget build(BuildContext context) {
     return Card(
       child: ListTile(
         onTap: (){
-         final controller = Controller();
-         controller.getUpcomingMovies();
+         // final controller = Controller();
+         // // controller.getUpcomingMovies();
           Navigator.push(context, MaterialPageRoute(builder: (context)=> MovieDecScreen()));
         },
         leading: CircleAvatar(
@@ -71,10 +81,10 @@ class TileWidget extends StatelessWidget {
           //   "asset/dice-1502706_640.png",
           //   fit: BoxFit.cover,
           // ),
-          backgroundImage:AssetImage( "asset/dice-1502706_640.png") ,
+          backgroundImage:NetworkImage( "http://image.tmdb.org/t/p/w92/${movie?.poster}") ,
         ),
-        title: Text("Angel Has Fallen"),
-        subtitle: Text("2019-08-17"),
+        title: Text(movie?.title??''),
+        subtitle: Text(movie?.releaseDate??''),
         trailing: Icon(Icons.arrow_forward_ios),
       ),
     );
